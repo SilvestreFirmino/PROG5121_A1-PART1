@@ -16,14 +16,22 @@ public class PROG5121_A1PART1 {
 
     public static VerifyUser registerUser() {
         Scanner check = new Scanner(System.in);
+        String firstName = "";
+        String lastName = "";
         String username = "";
         String password = "";
         String cellphoneNumber = "";
 
-        VerifyUser tempUser = new VerifyUser("", "", "");
+        VerifyUser tempUser = new VerifyUser("", "", "","","");
 
         System.out.println("************ User Registration *************");
 
+        System.out.println("Enter your First name:>> ");
+        firstName = check.nextLine();
+        
+        System.out.println("Enter your Last name:>> ");
+        lastName = check.nextLine();
+        
         // Username
         //The whlie loop ,loops until the conditions are met, through the checkUserName 
         while (true) {
@@ -69,7 +77,7 @@ public class PROG5121_A1PART1 {
     }
         System.out.println("********************************************");
         //storing the input values into these variables
-        return new VerifyUser(username, password, cellphoneNumber);
+        return new VerifyUser(username, password, cellphoneNumber, firstName, lastName);
  }
 
 
@@ -104,16 +112,17 @@ public class PROG5121_A1PART1 {
     }
 
     public static String returnLoginStatus(boolean loginSuccess, VerifyUser user) {
+        VerifyUser tempUser = new VerifyUser("", "", "","","");
         System.out.println("********************************************");
         //when vaild, prints out this result
         if (loginSuccess) {
             System.out.println("Login successful!");
-            System.out.println("Logged in as:>>> " + user.getUsername());
-            System.out.println("Cellphone number:>>> " + user.getCellPhoneNumber());
+            System.out.println("Welcome "+ tempUser.getFirstName()+ " " + tempUser.getLastName() +  "it is great to see you again");
             return "Login successful!";
         } else {
             //Prints out this result when attempts reach maximum attempts
             System.out.println("Login failed!");
+            System.err.println("Username or password incorrect , please try again");
             return "Login failed.";
         }
     }

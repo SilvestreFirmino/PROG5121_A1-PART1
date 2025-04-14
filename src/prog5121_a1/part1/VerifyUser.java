@@ -9,12 +9,16 @@ import java.util.regex.Pattern;
  */
 
 public class VerifyUser {
+    private String firstName;
+    private String lastName;
     private String username;
     private String password;
     private String cellPhoneNumber;
  
     //contractor
-    public VerifyUser(String username, String password , String cellPhoneNumber) {
+    public VerifyUser(String lastName ,String firstName ,String username, String password , String cellPhoneNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.username = username;
         this.password = password;
         this.cellPhoneNumber = cellPhoneNumber;
@@ -35,8 +39,8 @@ public class VerifyUser {
 
     public boolean checkCellPhoneNumber(String cellPhone) {
         /* returns true if phone number is correctly formatted and if the phone number is South African */
-        cellPhone.startsWith("+27");
-        String regex = "^[0-9]$";
+        
+        String regex = ("^\\+27\\d{9}$");
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(cellPhone);
         return matcher.matches();
@@ -56,6 +60,18 @@ public class VerifyUser {
 
     public String getCellPhoneNumber() {
         return cellPhoneNumber;
+    }
+    
+    
+    public String getFirstName(){
+     
+        return firstName;
+
+}
+    
+    public String getLastName(){
+    
+        return lastName;
     }
 }
 
