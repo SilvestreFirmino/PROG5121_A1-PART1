@@ -89,5 +89,120 @@ public class PROG5121_A1PART1IT {
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
+
+    /**
+     * Test of showChatMenu method, of class PROG5121_A1PART1.
+     */
+    @Test
+    public void testShowChatMenu() {
+        System.out.println("showChatMenu");
+        VerifyUser user = null;
+        PROG5121_A1PART1.showChatMenu(user);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of generateMessageID method, of class PROG5121_A1PART1.
+     */
+    @Test
+    public void testGenerateMessageID() {
+        System.out.println("generateMessageID");
+        String expResult = "";
+        String result = PROG5121_A1PART1.generateMessageID();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of checkRecipientCell method, of class PROG5121_A1PART1.
+     */
+    @Test
+    public void testCheckRecipientCell() {
+        System.out.println("checkRecipientCell");
+        String recipient = "";
+        int expResult = 0;
+        int result = PROG5121_A1PART1.checkRecipientCell(recipient);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of createMessageHash method, of class PROG5121_A1PART1.
+     */
+    @Test
+    public void testCreateMessageHash() {
+        System.out.println("createMessageHash");
+        Message message = null;
+        String expResult = "";
+        String result = PROG5121_A1PART1.createMessageHash(message);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of handleMessageAction method, of class PROG5121_A1PART1.
+     */
+    @Test
+    public void testHandleMessageAction() {
+        System.out.println("handleMessageAction");
+        Message message = null;
+        String expResult = "";
+        String result = PROG5121_A1PART1.handleMessageAction(message);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of printSentMessages method, of class PROG5121_A1PART1.
+     */
+    @Test
+    public void testPrintSentMessages() {
+        System.out.println("printSentMessages");
+        String expResult = "";
+        String result = PROG5121_A1PART1.printSentMessages();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of getTotalSentMessages method, of class PROG5121_A1PART1.
+     */
+    @Test
+    public void testGetTotalSentMessages() {
+        System.out.println("getTotalSentMessages");
+        String expResult = "";
+        String result = PROG5121_A1PART1.getTotalSentMessages();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of storeAllMessagesToJSON method, of class PROG5121_A1PART1.
+     */
+    @Test
+    public void testStoreAllMessagesToJSON() {
+        System.out.println("storeAllMessagesToJSON");
+        PROG5121_A1PART1.storeAllMessagesToJSON();
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of loadMessagesFromJSON method, of class PROG5121_A1PART1.
+     */
+    @Test
+    public void testLoadMessagesFromJSON() {
+        System.out.println("loadMessagesFromJSON");
+        PROG5121_A1PART1.loadMessagesFromJSON();
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
     
 }

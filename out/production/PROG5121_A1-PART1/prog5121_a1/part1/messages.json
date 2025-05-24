@@ -1,0 +1,12 @@
+{
+  "messages": [
+    {
+      "messageID": "12345",
+      "recipient": "+27123456789",
+      "content": "Hello World",
+      "messageHash": "12HW:0:HELHEL"
+    }
+  ],
+  "messageCount": 1,
+  "messageCounter": 1
+}

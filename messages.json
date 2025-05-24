@@ -1,0 +1,29 @@
+{
+  "sentMessages": [
+    {
+      "messageID": "0016312120",
+      "recipient": "+27123456789",
+      "content": "Hi wassup",
+      "messageHash": "00:0:HIWASSUP",
+      "status": "sent"
+    },
+    {
+      "messageID": "4547974121",
+      "recipient": "+27123456789",
+      "content": "Nigga love",
+      "messageHash": "45:1:NIGGALOVE",
+      "status": "sent"
+    },
+    {
+      "messageID": "4838497331",
+      "recipient": "+27123456789",
+      "content": "redcyclecomics",
+      "messageHash": "48:2:REDCYCLECOMICSREDCYCLECOMICS",
+      "status": "sent"
+    }
+  ],
+  "storedMessages": [
+  ],
+  "totalSent": 3,
+  "totalStored": 0
+}
