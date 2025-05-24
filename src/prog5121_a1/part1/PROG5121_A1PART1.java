@@ -2,7 +2,7 @@ package prog5121_a1.part1;
 
 /**
  *
- * @author Silvestre Fi
+ * @author Silvestre Firmino ST10453122
 */
 
 import javax.swing.JOptionPane;
