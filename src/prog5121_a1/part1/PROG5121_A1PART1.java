@@ -1,5 +1,10 @@
 package prog5121_a1.part1;
 
+/**
+ *
+ * @author Silvestre Fi
+*/
+
 import javax.swing.JOptionPane;
 import java.io.*; // Needed for JSON operations
 import java.util.Random; // Needed for message ID generation
