@@ -1,28 +1,57 @@
 {
-    "totalStored": 0,
-    "totalSent": 3,
+    "totalStored": 2,
+    "totalSent": 5,
     "sentMessages": [
         {
             "recipient": "+27123456789",
-            "messageID": "3119570545",
-            "messageHash": "31:0:YESYES",
-            "content": "yes",
+            "messageID": "5089654811",
+            "messageHash": "50:0:OHNOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+            "content": "OH NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
             "status": "sent"
         },
         {
             "recipient": "+27123456789",
-            "messageID": "1460076728",
-            "messageHash": "14:1:TESSSTESSS",
-            "content": "tesss",
+            "messageID": "0393286521",
+            "messageHash": "03:0:YESYOU",
+            "content": "yes how are you",
             "status": "sent"
         },
         {
             "recipient": "+27123456789",
-            "messageID": "9343985108",
-            "messageHash": "93:2:UIUI",
-            "content": "ui",
+            "messageID": "2328750340",
+            "messageHash": "23:3:REDROOM",
+            "content": "red room",
+            "status": "sent"
+        },
+        {
+            "recipient": "+27123456788",
+            "messageID": "4214945131",
+            "messageHash": "42:3:SEEYOU",
+            "content": "see you",
+            "status": "sent"
+        },
+        {
+            "recipient": "+27123456777",
+            "messageID": "8562673214",
+            "messageHash": "85:4:DEAFDEAF",
+            "content": "deaf",
             "status": "sent"
         }
     ],
-    "storedMessages": []
+    "storedMessages": [
+        {
+            "recipient": "+27123456789",
+            "messageID": "9316136434",
+            "messageHash": "93:0:REDSREDS",
+            "content": "REds",
+            "status": "stored"
+        },
+        {
+            "recipient": "+27123456788",
+            "messageID": "0385320346",
+            "messageHash": "03:4:OKDAMN",
+            "content": "ok damn",
+            "status": "stored"
+        }
+    ]
 }

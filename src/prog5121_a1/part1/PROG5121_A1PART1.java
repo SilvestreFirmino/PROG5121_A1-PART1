@@ -10,10 +10,9 @@ import org.json.JSONArray; // Import for JSON arrays
 import org.json.JSONException; // Import for JSON exceptions
 import javax.swing.JOptionPane;
 import java.io.BufferedReader; // For reading file
-import java.io.File;         // For file existence check
-import java.io.FileReader;     // For reading file
-import java.io.FileWriter;     // For writing file
-import java.io.IOException;    // For file I/O exceptions
+import java.io.File; // For file existence check
+import java.io.FileReader; // For reading file
+import java.io.IOException; // For file I/O exceptions
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption; // For controlling file write behavior
@@ -21,15 +20,22 @@ import java.util.Random; // Needed for message ID generation
 
 public class PROG5121_A1PART1 {
 
-    private static Message[] sentMessages = new Message[100];
-    private static Message[] storedMessages = new Message[100];
-    private static int sentCount = 0;
+
+    // Parallel arrays for storing messages
+    public static String[] storedMessageIDs = new String[100];
+    public static String[] storedRecipients = new String[100];
+    public static String[] storedContents = new String[100];
+    public static String[] storedMessageHashes = new String[100];
     private static int storedCount = 0;
 
-    private static final String JSON_FILE_PATH = "messages.json";
+
+    private static final String JSON_FILE_PATH = "messages.json"; // Path to the JSON file for storing messages
 
     public static void main(String[] args) {
-        // Load messages at the start of the application
+        /*
+         Load messages at the start of the application
+         Method to load messages from a JSON file
+        */
         loadMessagesFromJSON();
 
         VerifyUser registeredUser = registerUser();
@@ -118,10 +124,13 @@ public class PROG5121_A1PART1 {
             JOptionPane.showMessageDialog(null, welcomeMsg);
             return "Login successful!";
         } else {
-            JOptionPane.showMessageDialog(null, "Login failed!\nUsername or password incorrect, please try again."); // This should ideally not be reached if max attempts reached.
+            JOptionPane.showMessageDialog(null, "Login failed!\nUsername or password incorrect, please try again.");
             return "Login failed.";
         }
-    }  
+    }
+
+
+
 
     public static void showChatMenu(VerifyUser user) {
         JOptionPane.showMessageDialog(null, "Welcome to QuickChat.");
@@ -156,23 +165,32 @@ public class PROG5121_A1PART1 {
         int messagesSentThisSession = 0;
         boolean isRunning = true;
 
-        while (isRunning && messagesSentThisSession < maxMessages) {
-            String[] options = {"1) Send Messages", "2) Show recently sent messages", "3) Quit"};
-            int choice = JOptionPane.showOptionDialog(
-                    null,
-                    "Messages remaining: " + (maxMessages - messagesSentThisSession) + "\nChoose an option:",
-                    "QuickChat Menu",
-                    JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    options,
-                    options[0]);
+        // loops until the condition is met
+        while (true) {
+            String menuInput = JOptionPane.showInputDialog("Messages remaining: " + (maxMessages - messagesSentThisSession) + "\nChoose an option:\n" +
+                    "1) Send Messages \n" +
+                    "2) Show recently sent messages \n" +
+                    "3) Quit \n");
 
-            switch (choice) {
-                case 0: // Send Messages
+            if (menuInput == null) {
+                JOptionPane.showMessageDialog(null, "Goodbye " + user.getFirstName() + "!\n" + getTotalSentMessages());
+                break;
+            }
+
+            int options;
+            if (!menuInput.matches("\\d+")) {
+                JOptionPane.showMessageDialog(null, "Invalid input. Please enter a number.");
+                continue; // Changed from break to continue
+            } else {
+                options = Integer.parseInt(menuInput);
+            }
+
+            switch (options) {
+                // Send Messages
+                case 1:
                     if (messagesSentThisSession >= maxMessages) {
                         JOptionPane.showMessageDialog(null, "You have reached your message limit (" + maxMessages + "). Cannot send more messages.");
-                        isRunning = false; // Exit menu if limit reached
+                        isRunning = false;
                         break;
                     }
                     boolean messageSent = createAndSendMessage();
@@ -181,26 +199,88 @@ public class PROG5121_A1PART1 {
                     }
                     break;
 
-                case 1: // View Stored Messages (Coming Soon)
-                    JOptionPane.showMessageDialog(null, "Coming soon!");
+                // View Stored Messages
+                case 2:
+                    JOptionPane.showMessageDialog(null, Message.displayFullMessageReport());
+                    String menuInput2 = JOptionPane.showInputDialog("Choose an option:\n" +
+                            "1) Display the sender and recipient of all sent messages\n" +
+                            "2) Display the longest sent message\n"+
+                            "3) Search for message ID and display content\n"+
+                            "4) Search for all messages for a particular recipient\n"+
+                            "5) Delete a message using message ID\n"+
+                            "6) Display a report that lists the full details of all sent messages\n");
+
+                    if (menuInput2 == null) {
+                        break;
+                    }
+
+                    int options2;
+
+                    if (!menuInput2.matches("\\d+")) {
+                        JOptionPane.showMessageDialog(null, "Invalid input. Please enter a number.");
+                        break;
+                    }
+
+                    if (Integer.parseInt(menuInput2) > 6) {
+                        JOptionPane.showMessageDialog(null, "Invalid input. Please enter a number between 1 and 6.");
+                        break;
+                    }
+                    options2 = Integer.parseInt(menuInput2);
+
+                    switch (options2) {
+                        case 1: // Display the sender and recipient of all sent messages
+                            JOptionPane.showMessageDialog(null, Message.displaySenderAndRecipient());
+                            break;
+                        case 2: // Display the longest sent message
+                            JOptionPane.showMessageDialog(null, Message.displayLongestMessage());
+                            break;
+                        case 3: // Search for message ID and display content
+                            String messageID = JOptionPane.showInputDialog("Enter the message ID to search for:");
+                            if (messageID != null && !messageID.trim().isEmpty()) {
+                                String result = Message.searchForMessageByID(messageID);
+                                JOptionPane.showMessageDialog(null, result);
+                            } else {
+                                JOptionPane.showMessageDialog(null, "No message ID provided.");
+                            }
+                            break;
+                        case 4: // Search for a particular recipient
+                            String recipient = JOptionPane.showInputDialog("Enter the recipient to search for:");
+                            if (recipient != null && !recipient.trim().isEmpty()) {
+                                String result = Message.searchMessagesByRecipient(recipient);
+                                JOptionPane.showMessageDialog(null, result);
+                            } else {
+                                JOptionPane.showMessageDialog(null, "No recipient number provided.");
+                            }
+                            break;
+                        case 5: // Delete a message using message ID
+                            String messageID3 = JOptionPane.showInputDialog("Enter the message ID to delete:");
+                            if (messageID3 != null && !messageID3.trim().isEmpty()) {
+                                String result = Message.deleteMessageByID(messageID3);
+                                JOptionPane.showMessageDialog(null, result);
+                                storeAllMessagesToJSON(); // Save changes to file
+                            } else {
+                                JOptionPane.showMessageDialog(null, "No message ID provided.");
+                            }
+                            break;
+                        case 6: // Display a report that lists the full details of all sent messages
+                            JOptionPane.showMessageDialog(null, Message.displayFullMessageReport());
+                            break;
+                    }
                     break;
 
-                case 2: // Quit
+                case 3: // Quit
                     isRunning = false;
                     JOptionPane.showMessageDialog(null, "Goodbye " + user.getFirstName() + "!\n" + getTotalSentMessages());
                     break;
 
-                default: // User closed dialog (e.g., pressed 'X')
-                    isRunning = false;
-                    JOptionPane.showMessageDialog(null, "Goodbye " + user.getFirstName() + "!\n" + getTotalSentMessages());
+                default: // Invalid option
+                    JOptionPane.showMessageDialog(null, "Invalid option. Please choose 1, 2, or 3.");
                     break;
             }
-        }
 
-        // Display messages sent this session if the loop exited due to message limit
-        if (messagesSentThisSession >= maxMessages) {
-            JOptionPane.showMessageDialog(null, "You have reached your message limit (" + maxMessages + ") for this session.");
-            JOptionPane.showMessageDialog(null, printSentMessages()); // Show all sent messages
+            if (!isRunning) {
+                break;
+            }
         }
     }
 
@@ -218,7 +298,7 @@ public class PROG5121_A1PART1 {
 
             recipientStatus = checkRecipientCell(recipient);
 
-            if (recipientStatus == 0) { // checkRecipientCell now returns 0 for all invalid formats
+            if (recipientStatus == 0) {
                 JOptionPane.showMessageDialog(null, "Cell number must be in format +27xxxxxxxxx and contain only digits after +27 (total 12 characters).");
             }
         } while (recipientStatus != 1);
@@ -234,30 +314,78 @@ public class PROG5121_A1PART1 {
                 return false; // User cancelled
             } else if (messageContent.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Message cannot be empty.");
-            } else if (messageContent.length() > MAX_MESSAGE_LENGTH) {
+            } else if (messageContent.length() > MAX_MESSAGE_LENGTH) { // checks length
                 JOptionPane.showMessageDialog(null, "Please enter a message of no more than " + MAX_MESSAGE_LENGTH + " characters.");
             } else {
                 validMessage = true;
             }
         } while (!validMessage);
 
-        Message newMessage = new Message.MessageBuilder(messageID)
-                .recipient(recipient)
-                .content(messageContent)
-                .build();
+        String hash = createMessageHash(messageID, messageContent);
 
-        String hash = createMessageHash(newMessage);
-        newMessage.setMessageHash(hash);
+        JOptionPane.showMessageDialog(null, "Message Hash: " + hash);
 
-        JOptionPane.showMessageDialog(null, "Message Hash: " + newMessage.getMessageHash());
 
-        String result = handleMessageAction(newMessage);
+        String result = handleMessageAction(messageID, recipient, messageContent, hash);
 
         JOptionPane.showMessageDialog(null, result);
 
         return result.equals("Message sent successfully!");
     }
 
+
+    private static String handleMessageAction(String messageID, String recipient, String content, String hash) {
+        String menuInput = JOptionPane.showInputDialog("Do you want to:\n" +
+                "1. Send Message\n" +
+                "2. Store Message to send later\n" +
+                "3. Disregard Message\n");
+
+        if (menuInput == null) { // User cancelled
+            return "Operation cancelled. Message discarded.";
+        }
+
+        int options;
+
+        if (menuInput.matches("\\d+")) { // Check if input is a number
+            options = Integer.parseInt(menuInput);
+        } else {
+            return "Invalid option. Message discarded.";
+        }
+
+        if (Integer.parseInt(menuInput) >= 1 && Integer.parseInt(menuInput) <= 3) {
+            return "Invalid option. Message discarded, try picking 1 to 3.";
+        }
+
+        switch (options) {
+            case 1: // Send Message
+
+                if (Message.addSentMessage(messageID, recipient, content, hash)) {
+                    storeAllMessagesToJSON(); // Persist changes to file
+                    return "Message sent successfully!";
+                } else {
+                    return "Cannot send message - sent messages storage is full. Please clear some space.";
+                }
+
+            case 2: // Store Message to send later
+                if (storedCount < storedMessageIDs.length) {
+                    storedMessageIDs[storedCount] = messageID; // Store message ID
+                    storedRecipients[storedCount] = recipient;
+                    storedContents[storedCount] = content;
+                    storedMessageHashes[storedCount] = hash;
+                    storedCount++; // Increment stored count
+                    storeAllMessagesToJSON(); // Persist changes to file
+                    return "Message stored for later sending.";
+                } else {
+                    return "Cannot store message - stored messages storage is full. Please clear some space.";
+                }
+
+            case 3: // Disregard Message
+                return "Message discarded.";
+
+            default:
+                return "Invalid option. Message discarded.";
+        }
+    }
 
     public static String generateMessageID() {
         Random random = new Random();
@@ -269,13 +397,12 @@ public class PROG5121_A1PART1 {
         return sb.toString();
     }
 
-
     public static int checkRecipientCell(String recipient) {
         if (recipient == null) {
-            return 0; // Invalid (null input)
+            return 0; // Invalid format
         }
 
-        // Check for exact length of 12 characters
+        // Check for the exact length of 12 characters
         if (recipient.length() != 12) {
             return 0; // Invalid length
         }
@@ -296,17 +423,13 @@ public class PROG5121_A1PART1 {
         return 1; // Valid recipient number
     }
 
-
-    public static String createMessageHash(Message message) {
-        // Ensure message ID and content are not null or empty for hash creation
-        if (message.getMessageID() == null || message.getContent() == null || message.getContent().trim().isEmpty()) {
+    public static String createMessageHash(String messageID, String content) {
+        // Checking if message data is valid
+        if (messageID == null || content == null || content.trim().isEmpty()) {
             return ""; // Return empty hash for invalid message data
         }
 
-        String messageID = message.getMessageID();
-        String content = message.getContent();
-
-        // Extract first two digits from message ID (even if ID is longer, take first 2 numeric)
+        // Extract first two digits from message ID
         String firstTwoDigits = "";
         int digitCount = 0;
         for (char c : messageID.toCharArray()) {
@@ -316,111 +439,55 @@ public class PROG5121_A1PART1 {
                 if (digitCount == 2) break; // Take only the first two digits
             }
         }
-        // Pad with leading zeros if fewer than 2 digits were found (unlikely with generateMessageID)
+        // Ensure firstTwoDigits has at least 2 digits
         while (firstTwoDigits.length() < 2) {
             firstTwoDigits = "0" + firstTwoDigits;
         }
 
-        // Use the current sent count for the 'N' part of the hash
-        int messageNumber = sentCount;
+        // Get the number of sent messages
+
+        int messageNumber = Message.getSentCount();
 
         // Extract first and last words from message content
         String[] words = content.trim().split("\\s+");
         String firstWord = words.length > 0 ? words[0] : "";
         String lastWord = words.length > 1 ? words[words.length - 1] : firstWord; // If only one word, first and last are the same
 
-        // Construct the hash: firstTwoDigits:N:(firstWord+lastWord in uppercase, no special chars)
+        // Create the hash
         String hash = firstTwoDigits + ":" + messageNumber + ":" +
                 (firstWord + lastWord).toUpperCase().replaceAll("[^A-Z0-9]", ""); // Remove non-alphanumeric
 
         return hash;
     }
 
-
-    public static String handleMessageAction(Message message) {
-        String[] options = {"Send Message", "Store Message to send later", "Disregard Message"};
-        int choice = JOptionPane.showOptionDialog(
-                null,
-                "Choose an option for this message:",
-                "Message Options",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]); // Default to "Send Message"
-
-        switch (choice) {
-            case 0: // Send Message
-                if (sentCount < sentMessages.length) {
-                    sentMessages[sentCount] = message; // Add message to sent array
-                    sentCount++; // Increment sent count
-                    storeAllMessagesToJSON(); // Persist changes to file
-                    return "Message sent successfully!";
-                } else {
-                    return "Cannot send message - sent messages storage is full. Please clear some space.";
-                }
-
-            case 1: // Store Message to send later
-                if (storedCount < storedMessages.length) {
-                    storedMessages[storedCount] = message; // Add message to stored array
-                    storedCount++; // Increment stored count
-                    storeAllMessagesToJSON(); // Persist changes to file
-                    return "Message stored for later sending.";
-                } else {
-                    return "Cannot store message - stored messages storage is full. Please clear some space.";
-                }
-
-            case 2: // Disregard Message
-                return "Message discarded.";
-
-            default:
-                return "Operation cancelled. Message discarded.";
-        }
+    public static  String printMessages() {
+        return Message.printMessages();
     }
-
-
-    public static String printSentMessages() {
-        if (sentCount == 0) {
-            return "No messages have been sent yet.";
-        }
-
-        StringBuilder output = new StringBuilder("--- QuickChat Sent Messages ---\n\n");
-        for (int i = 0; i < sentCount; i++) {
-            Message msg = sentMessages[i];
-            // Ensure the message object is not null in the array (important for robustness)
-            if (msg != null) {
-                output.append("#Message ").append(i + 1).append(":\n");
-                output.append("  ID: ").append(msg.getMessageID()).append("\n");
-                output.append("  Recipient: ").append(msg.getRecipient()).append("\n");
-                output.append("  Content: ").append(msg.getContent()).append("\n");
-                output.append("  Hash: ").append(msg.getMessageHash()).append("\n");
-                output.append("  ------------End of messages-------------\n\n");
-            }
-        }
-        return output.toString();
-    }
-
 
     public static String getTotalSentMessages() {
-        return "Total number of sent messages: " + sentCount;
+        return "Total number of sent messages: " + Message.getSentCount();
     }
-
 
     public static void storeAllMessagesToJSON() {
         JSONObject rootObject = new JSONObject();
         JSONArray sentJsonArray = new JSONArray();
         JSONArray storedJsonArray = new JSONArray();
 
-        // Populate sent messages array for JSON
+        /* Populate a sent message array for JSON using Message class arrays */
+        String[] sentMessageIDs = Message.getSentMessageIDs();
+        String[] sentRecipients = Message.getSentRecipients();
+        String[] sentContents = Message.getSentContents();
+        String[] sentMessageHashes = Message.getSentMessageHashes();
+        int sentCount = Message.getSentCount();
+
         for (int i = 0; i < sentCount; i++) {
-            Message msg = sentMessages[i];
-            if (msg == null) continue; // Skip if array element is null
+            if (sentMessageIDs[i] == null) continue; // Skip if array element is null
             JSONObject msgObject = new JSONObject();
             try {
-                msgObject.put("messageID", msg.getMessageID());
-                msgObject.put("recipient", msg.getRecipient());
-                msgObject.put("content", msg.getContent());
-                msgObject.put("messageHash", msg.getMessageHash());
+                msgObject.put("messageID", sentMessageIDs[i]);
+                msgObject.put("recipient", sentRecipients[i]);
+                msgObject.put("content", sentContents[i]);
+                msgObject.put("messageHash", sentMessageHashes[i]);
                 msgObject.put("status", "sent"); // Add status for clarity
                 sentJsonArray.put(msgObject);
             } catch (JSONException e) {
@@ -428,16 +495,16 @@ public class PROG5121_A1PART1 {
             }
         }
 
-        // Populate stored messages array for JSON
+        // Populate a stored messages array for JSON using parallel arrays
+
         for (int i = 0; i < storedCount; i++) {
-            Message msg = storedMessages[i];
-            if (msg == null) continue; // Skip if array element is null
+            if (storedMessageIDs[i] == null) continue; // Skip if array element is null
             JSONObject msgObject = new JSONObject();
             try {
-                msgObject.put("messageID", msg.getMessageID());
-                msgObject.put("recipient", msg.getRecipient());
-                msgObject.put("content", msg.getContent());
-                msgObject.put("messageHash", msg.getMessageHash());
+                msgObject.put("messageID", storedMessageIDs[i]); // Use storedMessageIDs
+                msgObject.put("recipient", storedRecipients[i]);
+                msgObject.put("content", storedContents[i]);
+                msgObject.put("messageHash", storedMessageHashes[i]);
                 msgObject.put("status", "stored"); // Add status for clarity
                 storedJsonArray.put(msgObject);
             } catch (JSONException e) {
@@ -453,7 +520,7 @@ public class PROG5121_A1PART1 {
 
             // Write the pretty-printed JSON to the file, creating/overwriting it
             Files.write(Paths.get(JSON_FILE_PATH), rootObject.toString(4).getBytes(),
-                        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             System.out.println("Messages successfully written to JSON file: " + JSON_FILE_PATH);
         } catch (JSONException e) {
             System.err.println("Error building root JSON object or putting data: " + e.getMessage());
@@ -462,13 +529,12 @@ public class PROG5121_A1PART1 {
         }
     }
 
-   
     public static void loadMessagesFromJSON() {
         File file = new File(JSON_FILE_PATH);
-        // Check if file exists and is not empty to avoid JSONException on empty content
+        // Check if a file exists and is not empty to avoid JSONException on empty content
         if (!file.exists() || file.length() == 0) {
             System.out.println("No existing or empty JSON file found at '" + JSON_FILE_PATH + "'. Starting with empty message lists.");
-            sentCount = 0;
+            Message.setSentCount(0);
             storedCount = 0;
             return;
         }
@@ -482,41 +548,47 @@ public class PROG5121_A1PART1 {
 
             JSONObject rootObject = new JSONObject(jsonContent.toString());
 
-            // Load sent messages array
+            // Load sent messages array into Message class arrays
             if (rootObject.has("sentMessages")) {
                 JSONArray sentJsonArray = rootObject.getJSONArray("sentMessages");
-                sentCount = 0; // Reset count before loading
-                for (int i = 0; i < sentJsonArray.length() && sentCount < sentMessages.length; i++) {
+                Message.setSentCount(0); // Reset count before loading
+
+                String[] sentMessageIDs = Message.getSentMessageIDs();
+                String[] sentRecipients = Message.getSentRecipients();
+                String[] sentContents = Message.getSentContents();
+                String[] sentMessageHashes = Message.getSentMessageHashes();
+                int sentCount = 0;
+
+                for (int i = 0; i < sentJsonArray.length() && sentCount < 100; i++) {
                     JSONObject msgObject = sentJsonArray.getJSONObject(i);
                     // Robustly check for key existence before accessing
                     if (msgObject.has("messageID") && msgObject.has("recipient") &&
-                        msgObject.has("content") && msgObject.has("messageHash")) {
-                        Message msg = new Message.MessageBuilder(msgObject.getString("messageID"))
-                                .recipient(msgObject.getString("recipient"))
-                                .content(msgObject.getString("content"))
-                                .build();
-                        msg.setMessageHash(msgObject.getString("messageHash"));
-                        sentMessages[sentCount++] = msg;
+                            msgObject.has("content") && msgObject.has("messageHash")) {
+                        sentMessageIDs[sentCount] = msgObject.getString("messageID");
+                        sentRecipients[sentCount] = msgObject.getString("recipient");
+                        sentContents[sentCount] = msgObject.getString("content");
+                        sentMessageHashes[sentCount] = msgObject.getString("messageHash");
+                        sentCount++;
                     } else {
                         System.err.println("Warning: Skipping malformed sent message object at index " + i + " in JSON.");
                     }
                 }
+                Message.setSentCount(sentCount);
             }
 
-            // Load stored messages array
+            // Load stored messages array into parallel arrays
             if (rootObject.has("storedMessages")) {
                 JSONArray storedJsonArray = rootObject.getJSONArray("storedMessages");
                 storedCount = 0; // Reset count before loading
-                for (int i = 0; i < storedJsonArray.length() && storedCount < storedMessages.length; i++) {
+                for (int i = 0; i < storedJsonArray.length() && storedCount < storedMessageIDs.length; i++) {
                     JSONObject msgObject = storedJsonArray.getJSONObject(i);
-                     if (msgObject.has("messageID") && msgObject.has("recipient") &&
-                        msgObject.has("content") && msgObject.has("messageHash")) {
-                        Message msg = new Message.MessageBuilder(msgObject.getString("messageID"))
-                                .recipient(msgObject.getString("recipient"))
-                                .content(msgObject.getString("content"))
-                                .build();
-                        msg.setMessageHash(msgObject.getString("messageHash"));
-                        storedMessages[storedCount++] = msg;
+                    if (msgObject.has("messageID") && msgObject.has("recipient") &&
+                            msgObject.has("content") && msgObject.has("messageHash")) {
+                        storedMessageIDs[storedCount] = msgObject.getString("messageID"); // FIXED: 2D array access
+                        storedRecipients[storedCount] = msgObject.getString("recipient");
+                        storedContents[storedCount] = msgObject.getString("content");
+                        storedMessageHashes[storedCount] = msgObject.getString("messageHash");
+                        storedCount++;
                     } else {
                         System.err.println("Warning: Skipping malformed stored message object at index " + i + " in JSON.");
                     }
@@ -525,22 +597,23 @@ public class PROG5121_A1PART1 {
 
             // Update internal counts from JSON if available, otherwise use populated counts
             if (rootObject.has("totalSent")) {
-                sentCount = rootObject.getInt("totalSent");
+                Message.setSentCount(rootObject.getInt("totalSent"));
             }
             if (rootObject.has("totalStored")) {
                 storedCount = rootObject.getInt("totalStored");
             }
-
-            System.out.println("Loaded " + sentCount + " sent messages and " + storedCount + " stored messages from JSON file: " + JSON_FILE_PATH);
-
+            System.out.println("Messages successfully loaded from JSON file: " + JSON_FILE_PATH);
+        } catch (JSONException e) {
+            System.err.println("Error parsing JSON file '" + JSON_FILE_PATH + "': " + e.getMessage());
+            // If there's a parsing error, it's safer to clear existing data
+            Message.setSentCount(0);
+            storedCount = 0;
+            JOptionPane.showMessageDialog(null, "Error loading messages from file. Starting with empty message lists.");
         } catch (IOException e) {
             System.err.println("Error reading JSON file '" + JSON_FILE_PATH + "': " + e.getMessage());
-            sentCount = 0; // Reset counts on read error to prevent partial data issues
+            Message.setSentCount(0);
             storedCount = 0;
-        } catch (JSONException e) {
-            System.err.println("Error parsing JSON content from '" + JSON_FILE_PATH + "': " + e.getMessage() + ". File might be corrupted or incorrectly formatted.");
-            sentCount = 0; // Reset counts on parse error
-            storedCount = 0;
+            JOptionPane.showMessageDialog(null, "Error reading messages from file. Starting with empty message lists.");
         }
     }
 }

@@ -164,7 +164,7 @@ public class PROG5121_A1PART1IT {
     public void testPrintSentMessages() {
         System.out.println("printSentMessages");
         String expResult = "";
-        String result = PROG5121_A1PART1.printSentMessages();
+        String result = PROG5121_A1PART1.createMessageHash();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -201,6 +201,19 @@ public class PROG5121_A1PART1IT {
     public void testLoadMessagesFromJSON() {
         System.out.println("loadMessagesFromJSON");
         PROG5121_A1PART1.loadMessagesFromJSON();
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of printMessages method, of class PROG5121_A1PART1.
+     */
+    @Test
+    public void testPrintMessages() {
+        System.out.println("printMessages");
+        String expResult = "";
+        String result = PROG5121_A1PART1.printMessages();
+        assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
